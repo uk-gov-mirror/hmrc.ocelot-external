@@ -1,3 +1,3 @@
 # microservice specific routes
 
-GET        /hello-world             @uk.gov.hmrc.ocelotexternal.controllers.MicroserviceHelloWorld.hello
+GET        /ocelot-external         @uk.gov.hmrc.ocelotexternal.controllers.OcelotExternal.fetch

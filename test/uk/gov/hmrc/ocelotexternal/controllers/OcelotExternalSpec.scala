@@ -16,19 +16,21 @@
 
 package uk.gov.hmrc.ocelotexternal.controllers
 
-import javax.inject.Singleton
+import play.api.http.Status
+import play.api.test.FakeRequest
+import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
 
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
+class OcelotExternalSpec extends UnitSpec with WithFakeApplication {
 
-import scala.concurrent.Future
+  val fakeRequest = FakeRequest("GET", "/")
 
-@Singleton()
-class MicroserviceHelloWorld extends BaseController {
+  "GET /" should {
+    "return 200" in {
+      val controller = new OcelotExternal()
+      val result = controller.fetch()(fakeRequest)
+      status(result) shouldBe Status.OK
+    }
+  }
 
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
 
 }

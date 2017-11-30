@@ -18,17 +18,15 @@ package uk.gov.hmrc.ocelotexternal.controllers
 
 import javax.inject.Singleton
 
+import play.api.mvc.Action
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
 
 import scala.concurrent.Future
 
 @Singleton()
-class MicroserviceHelloWorld extends BaseController {
+class OcelotExternal() extends BaseController {
 
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
-
+  def fetch() = Action.async { implicit request =>
+    Future.successful(Ok("Hello world"))
+  }
 }
