@@ -20,7 +20,6 @@ import javax.inject.Singleton
 
 import play.api.mvc.Action
 import uk.gov.hmrc.mongo.Awaiting
-import uk.gov.hmrc.ocelotexternal.ProcessData
 import uk.gov.hmrc.ocelotexternal.repositories.{OcelotRepository, ProcessData}
 import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
@@ -29,7 +28,7 @@ import scala.concurrent.Future
 @Singleton()
 class OcelotExternal() extends BaseController with Awaiting {
 
-  val db = new OcelotRepository()
+  val db = OcelotRepository()
 
   def fetch(id: String) = Action.async { implicit request =>
 

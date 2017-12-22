@@ -27,7 +27,7 @@ class OcelotRepositorySpec extends UnitSpec with MongoSpecSupport {
 
     "add a process" in {
       val result = await(db.insertProcess(basicProcess))
-      assert(resukt.ok == true)
+      assert(result.ok == true)
     }
 
   }

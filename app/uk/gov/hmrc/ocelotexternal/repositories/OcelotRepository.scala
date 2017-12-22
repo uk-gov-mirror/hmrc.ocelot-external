@@ -16,22 +16,30 @@
 
 package uk.gov.hmrc.ocelotexternal.repositories
 
-import play.api.libs.json.{Format, JsObject, Json}
+import play.api.libs.json.{JsObject, Json}
 import play.modules.reactivemongo.MongoDbConnection
 import reactivemongo.api.DB
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes.{Index, IndexType}
 import reactivemongo.bson.{BSONDocument, BSONObjectID}
+import reactivemongo.play.json._
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 import uk.gov.hmrc.mongo.{ReactiveRepository, Repository}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
+trait ProcessCreate
+
+case class ProcessCreated(processData: ProcessData) extends ProcessCreate
+
+case object ProcessCreateError extends ProcessCreate
 
 trait OcelotRepository extends Repository[ProcessData, BSONObjectID] {
 
   def insertProcess(process: ProcessData): Future[WriteResult]
 
-  def fetchProcess(processId: String): Future[ProcessData]
+  def fetchProcess(processId: String): Future[ProcessCreate]
 }
 
 object OcelotRepository extends MongoDbConnection {
@@ -50,12 +58,15 @@ class OcelotMongoRepository(implicit mongo: () => DB)
     collection.insert[ProcessData](process)
   }
 
-  override def fetchProcess(processId: String): Future[ProcessData] = {
+  override def fetchProcess(processId: String): Future[ProcessCreate] = {
     val query = BSONDocument(
       "processId" -> processId
     )
 
-    collection.find(query).one[ProcessData]
+    collection.find(query).one[ProcessData] map {
+      case Some(result) => ProcessCreated(result)
+      case _ => ProcessCreateError
+    }
   }
 }
 
@@ -63,11 +74,5 @@ class OcelotMongoRepository(implicit mongo: () => DB)
 case class ProcessData(processId: String, data: JsObject, id: BSONObjectID = BSONObjectID.generate)
 
 object ProcessData {
-
-  import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
-
-  implicit val formats: Format[ProcessData] = mongoEntity {
-    Json.format[ProcessData]
-  }
+  implicit val formats = Json.format[ProcessData]
 }
-
