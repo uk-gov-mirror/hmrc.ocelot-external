@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.ocelotexternal.controllers
+package uk.gov.hmrc.ocelotexternal.repositories
 
-import play.api.http.Status
-import play.api.test.FakeRequest
-import uk.gov.hmrc.play.test.{UnitSpec, WithFakeApplication}
+import play.api.libs.json.{JsObject, Json}
+import reactivemongo.api.DB
+import uk.gov.hmrc.mongo.MongoSpecSupport
+import uk.gov.hmrc.play.test.UnitSpec
 
-class OcelotExternalSpec extends UnitSpec with WithFakeApplication {
+class OcelotRepositorySpec extends UnitSpec with MongoSpecSupport {
 
-  val fakeRequest = FakeRequest("GET", "/")
+  "OcelotRepositry" should {
 
-  "GET /oct90001" should {
-    "get the right process" in {
-      val controller = new OcelotExternal()
-      val result = controller.fetch("oct90001")(fakeRequest)
-      status(result) shouldBe Status.OK
+    "add a process" in {
+      val result = await(db.insertProcess(basicProcess))
+      assert(resukt.ok == true)
     }
+
   }
+
+
+  def db(implicit mongo: () => DB) = new OcelotMongoRepository()
+
+  var basicProcess = ProcessData("oct90001", Json.parse("""{}""").as[JsObject])
+
 }
