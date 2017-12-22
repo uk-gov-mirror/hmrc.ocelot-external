@@ -30,5 +30,13 @@ class OcelotExternalSpec extends UnitSpec with WithFakeApplication {
       val result = controller.fetch("oct90001")(fakeRequest)
       status(result) shouldBe Status.OK
     }
+
+    "get the wrong process" in {
+      val controller = new OcelotExternal()
+      val result = controller.fetch("bogus")(fakeRequest)
+      status(result) shouldBe Status.NOT_FOUND
+    }
+
+
   }
 }

@@ -32,8 +32,20 @@ class OcelotExternal() extends BaseController with Awaiting {
 
   def fetch(id: String) = Action.async { implicit request =>
 
-    val result: List[ProcessData] = await(db.findAll())
+    if (id.matches("^[a-z]{3}\\d{5}$")) {
 
-    Future.successful(Ok(result.head.data))
+      val result: List[ProcessData] = await(db.findAll())
+
+      if (result.nonEmpty) {
+        Future.successful(Ok(result.head.data))
+      } else {
+
+        Future.successful(NotFound("Process not found"))
+      }
+    } else {
+      Future.successful(NotFound("Process not found"))
+    }
   }
+
+
 }

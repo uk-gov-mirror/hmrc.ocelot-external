@@ -15,19 +15,20 @@
  */
 
 package uk.gov.hmrc.ocelotexternal.repositories
-
+import scala.concurrent.ExecutionContext.Implicits.global
+import org.scalatest.BeforeAndAfterEach
 import play.api.libs.json.{JsObject, Json}
 import reactivemongo.api.DB
 import uk.gov.hmrc.mongo.MongoSpecSupport
 import uk.gov.hmrc.play.test.UnitSpec
 
-class OcelotRepositorySpec extends UnitSpec with MongoSpecSupport {
+class OcelotRepositorySpec extends UnitSpec with MongoSpecSupport with BeforeAndAfterEach {
 
   "OcelotRepositry" should {
 
     "add a process" in {
       val result = await(db.insertProcess(basicProcess))
-      assert(result.ok == true)
+      assert(result.ok)
     }
 
   }
@@ -37,4 +38,8 @@ class OcelotRepositorySpec extends UnitSpec with MongoSpecSupport {
 
   var basicProcess = ProcessData("oct90001", Json.parse("""{}""").as[JsObject])
 
+
+  override def beforeEach() {
+    await(db.removeAll())
+  }
 }
